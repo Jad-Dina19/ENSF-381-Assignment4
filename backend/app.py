@@ -20,7 +20,7 @@ def signup():
         users = json.load(f)
     
     username_regex = r'^[A-Za-z][a-zA-Z0-9_]{3,20}$'
-    email_regex = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    email_regex = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
     password_regex = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$'
 
     if not re.match(username_regex, username):
@@ -28,12 +28,12 @@ def signup():
                 'message': 'Invalid username, Must be 3- 20 characters, start with a letter, and can contain letters, numbers, and underscores.',
                 'success': False
                 })
-    if not re.match(email, email_regex):
+    if not re.fullmatch(email_regex, email):
         return flask.jsonify({
                 'message': 'Invalid email, Must be in form -------@----.----',
                 'success': False
                 })
-    if not re.match(password, password_regex):
+    if not re.fullmatch(password_regex, password):
         return flask.jsonify({
                 'message': 'Invalid password, must have one uppercase letter, one lowercase letter, a digit, special character, and must be at least 8 digits',
                 'success': False
@@ -81,7 +81,8 @@ def login():
 
     for user in users:
         if user['username'] == username:
-            if bcrypt.checkpw(password.encode('utf-8'), user['password_hash'].encode('utf-8')):
+            stored_hash = user.get('password_hash', '')
+            if bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8')):
                 return flask.jsonify({
                     'message': 'Login successful',
                     'success': True
@@ -182,8 +183,11 @@ def get_cart():
     "message": f"User {user_id} not found."
     })
 
-
-
+if __name__ == '__main__':
+    app.run(debug=True)
+    password = "password123"
+    password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+    print(password_hash)
 
 
 

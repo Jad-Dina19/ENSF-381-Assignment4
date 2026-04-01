@@ -2,21 +2,30 @@ import React from "react";
 import flavours from "./data/flavours";
 import { useEffect, useState } from "react";
 import reviews from "./data/reviews"
-import { Link } from "react-router-dom";
+import { Link} from "react-router-dom";
 
 
-export function Header() {
+export function Header({isLoggedIn, setIsLoggedIn}) {
+    
     return (
         <div>
             <header>
                 <img src="/images/logo.webp" alt="Sweet Scoop logo" />
                 <h1>Sweet Scoop Ice Cream</h1>
+                {
+                    isLoggedIn ? <Link onClick={() => {
+                        localStorage.clear();
+                        setIsLoggedIn(false);
+                        
+
+                    }} to="/">Logout</Link> : <Link to="/login">Login</Link>
+                }
                 
             </header>
             <div className="navbar">
-                <Link href="/">Home</Link>
-                <Link href="/FlavoursPage">Flavors</Link>
-                <Link to="/login">Login</Link>
+                <Link to="/">Home</Link>
+                <Link to="/FlavoursPage">Flavors</Link>
+                
             </div>
         </div>
     );
@@ -88,10 +97,10 @@ export function Footer(){
     )
 }
 
-export default function Home(){
+export default function Home({isLoggedIn, setIsLoggedIn}){
     return(
         <div> 
-            <Header/>
+            <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
             <MainSection/>
             <Footer/>
         </div>
