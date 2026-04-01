@@ -1,31 +1,45 @@
 [
-{
-    "id": 1,
-    "username": "sweet_alice",
-    "email": "alice@example.com",
-    "password_hash": "$2b$12$examplehashedvalue",
-    "cart": [
-        {
-        "flavorId": 2,
-        "name": "Chocolate Bliss",
-        "price": 5.49,
-        "quantity": 2
-        }
-    ],
-    "orders": [
-        {
-        "orderId": 1,
-        "items": [
+    {
+        "id": 1,
+        "username": "sweet_alice",
+        "email": "alice@example.com",
+        "password_hash": "$2b$12$dm1faFEqOhi6xmMAIUTWAu3c0ITkxE9KvRraGvvx3NFdduMifKiMW",
+        "cart": [
             {
-            "flavorId": 1,
-            "name": "Vanilla Dream",
-            "price": 4.99,
-            "quantity": 1
+                "flavorId": 2,
+                "name": "Chocolate Bliss",
+                "price": 5.49,
+                "quantity": 2
             }
         ],
-        "total": 4.99,
-        "timestamp": "2026-03-30 18:30:00"
-        }
-    ]
-}
+        "orders": [
+            {
+                "orderId": 1,
+                "items": [
+                    {
+                        "flavorId": 1,
+                        "name": "Vanilla Dream",
+                        "price": 4.99,
+                        "quantity": 1
+                    }
+                ],
+                "total": 4.99,
+                "timestamp": "2026-03-30 18:30:00"
+            }
+        ]
+    },
+    {
+        "username": "Jad_dina",
+        "email": "jaddina19@outlook.com",
+        "password_hash": "$2b$12$j0VrplixfUmOscD7F3YzQuHM0Z0L0VdppApTB32MNLEB12Tf8TCDi",
+        "cart": [],
+        "orders": []
+    },
+    {
+        "username": "testing_test",
+        "email": "test@test.com",
+        "password_hash": "$2b$12$Ij44RuNBSgy5AhQSe5bb0u0IgFWGWjB40bczS92cj98.176w30wKy",
+        "cart": [],
+        "orders": []
+    }
 ]
