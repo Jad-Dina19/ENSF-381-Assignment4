@@ -1,0 +1,28 @@
+const reviews = [
+  {
+    customerName: "Alice Johnson",
+    flavorName: "Vanilla Dream",
+    review: "The ice cream was delicious and very creamy!",
+    rating: 5
+  },
+  {
+    customerName: "Michael Lee",
+    flavorName: "Chocolate Heaven",
+    review: "Rich chocolate flavor and super smooth texture.",
+    rating: 4
+  },
+  {
+    customerName: "Sophia Martinez",
+    flavorName: "Strawberry Swirl",
+    review: "Fresh and fruity with just the right amount of sweetness.",
+    rating: 5
+  },
+  {
+    customerName: "David Brown",
+    flavorName: "Mint Chip Blast",
+    review: "Very refreshing, and the chocolate chips added a nice crunch.",
+    rating: 4
+  }
+];
+
+export default reviews;
