@@ -2,7 +2,7 @@ const flavors = [
   {
     id: 1,
     name: "Vanilla Dream",
-    price: "$4.99",
+    price: 4.99,
     description: "Classic creamy vanilla ice cream made with fresh ingredients.",
     duration: "8 weeks",
     image: "images/vanilla.jpg"
@@ -10,7 +10,7 @@ const flavors = [
   {
     id: 2,
     name: "Chocolate Heaven",
-    price: "$5.49",
+    price: 5.49,
     description: "Rich chocolate ice cream made with premium cocoa.",
     duration: "10 weeks",
     image: "images/chocolate.jpg"

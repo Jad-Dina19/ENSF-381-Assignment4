@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Header, Footer } from "./Homepage";
 
-function DisplayStatus(props) {
+export function DisplayStatus(props) {
     const statusColor = props.type === "success" ? "green" : "red";
     return (
         <div style={{ color: statusColor, fontWeight: "bold" }}>
@@ -11,7 +11,7 @@ function DisplayStatus(props) {
     );
 }
 
-function LoginForm() {
+function LoginForm({setIsLoggedIn}) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [msg, setMsg] = useState("");
@@ -31,26 +31,34 @@ function LoginForm() {
             return;
         }
 
-        fetch("https://jsonplaceholder.typicode.com/users")
-            .then(res => res.json())
+        fetch("http://127.0.0.1:5000/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        }).then(res => res.json())
             .then(data => {
-                let found = false;
-        for (let i = 0; i < data.length; i++) {
-            if (data[i].username === username && data[i].email === password) {
-                found = true;
-            }
-        }
-
-        if (found) {
-            setMsg("Login successful");
-            setMsgType("success");
-        } else {
-            setMsg("Invalid credentials.");
+                if(data.success){
+                    setMsg(data.message)
+                    setMsgType("success")
+                    setIsLoggedIn(true)
+                    localStorage.setItem("isLoggedIn", "true");
+                }else{
+                    setMsg(data.message || "Invalid credentials.")
+                    setMsgType("error")
+                }
+            }).catch(() => {
+            setMsg("Server error.");
             setMsgType("error");
-        }
             });
-    }
+        }
 
+    
+    
     useEffect(() => {
         if (msgType === "success") {
             setTimeout(() => {
@@ -64,27 +72,34 @@ function LoginForm() {
             <h2>Login</h2>
             <form>
                 <label>Username: </label>
+                <br />
                 <input type="text" value={username} onChange={event => setUsername(event.target.value)} />
                 <br />
+                <br />
                 <label>Password: </label>
+                <br />
                 <input type="password" value={password} onChange={event => setPassword(event.target.value)} />
                 <br />
                 
+        
                 {msg !== "" && <DisplayStatus type={msgType} message={msg} />}
                 
                 <button type="button" onClick={handleLogin}>Login</button>
                 <br />
+                <br />
                 <a href="#">Forgot Password?</a>
+                <br />
+                <Link to="/signup">Need and Account? Sign Up</Link>
             </form>
         </div>
     );
 }
 
-export default function LoginPage() {
+export default function LoginPage({isLoggedIn, setIsLoggedIn }) {
     return (
         <div>
-            <Header />
-            <LoginForm />
+            <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
+            <LoginForm setIsLoggedIn={setIsLoggedIn}/>
             <Footer />
         </div>
     );

@@ -75,7 +75,7 @@ function OrderList({ order, removeFromOrder }) {
     );
 }
 
-export default function Flavors() {
+export default function Flavors({isLoggedIn, setIsLoggedIn}) {
     const [order, setOrder] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -123,7 +123,7 @@ export default function Flavors() {
 
     return (
         <div className="flavors-page">
-            <Header />
+            <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
             <div className="content">
                 <FlavourCatalog addToOrder={addToOrder} />
                 <OrderList order={order} removeFromOrder={removeFromOrder} />

@@ -15,6 +15,14 @@ border-bottom: 4px solid #e4b48c;
 font-weight: bold;
 }
 
+header a{
+    text-decoration: none;
+    color: #8b4a2b;
+    font-weight: bold;
+    margin: 0 10px; 
+    margin-left:auto ;
+}
+
 header h1 {
 margin: 0;
 font-size: 28px;
