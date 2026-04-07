@@ -73,12 +73,12 @@ function SignUpForm(){
                 <br />
                 <label>Password</label>
                 <br />
-                <input type="text" value={password} onChange={event => setPassword(event.target.value)} />
+                <input type="password" value={password} onChange={event => setPassword(event.target.value)} />
                 <br />
                 <br /> 
                 <label>Confirm Password</label>
                 <br />
-                <input type="text" value={confirmPassword} onChange={event => setConfirmPassword(event.target.value)} />
+                <input type="password" value={confirmPassword} onChange={event => setConfirmPassword(event.target.value)} />
                 <br /> 
 
                  {message !== "" && <DisplayStatus type={messageType} message={message} />}

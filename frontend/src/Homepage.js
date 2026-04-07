@@ -43,7 +43,7 @@ function IceCreamCard({flavour}){
     <div className="flavor-card">
         <h3>{name}</h3>
         <p>{description}</p>
-        <p>Price: {price}</p>
+        <p>Price: ${price}</p>
         <img src={image} alt={name}/>
     </div>
    )

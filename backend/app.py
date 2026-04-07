@@ -118,8 +118,6 @@ def load_reviews():
         'message': "Reviews failed to load.",
     })
 
-    
-    
     return flask.jsonify({
         'success': True,
         'message': "Reviews loaded.",
@@ -186,8 +184,6 @@ def get_cart():
     "message": f"User {user_id} not found."
     })
 
-
-
 @app.route('/cart', methods=['POST'])
 def add_to_cart():
     data = flask.request.get_json()
@@ -212,7 +208,7 @@ def add_to_cart():
             user['cart'].append({
                 "flavorId": selected_flavor['id'],
                 "name": selected_flavor['name'],
-                "price": float(selected_flavor['price'].replace('$', '')),
+                "price": selected_flavor['price'],
                 "quantity": 1
             })
             
@@ -317,17 +313,6 @@ def get_orders():
 
     return flask.jsonify({"success": False, "message": "User not found."}), 404
 
-
-
 if __name__ == '__main__':
     app.run(debug=True)
-    password = "password123"
-    password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
-    print(password_hash)
-
-
-
-
-
-
-
+    

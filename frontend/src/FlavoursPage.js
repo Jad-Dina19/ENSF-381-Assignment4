@@ -77,10 +77,6 @@ function OrderList({ order, removeFromOrder }) {
 }
 
 export default function Flavors({isLoggedIn, setIsLoggedIn}) {
-
-    
-
-    
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -88,9 +84,6 @@ export default function Flavors({isLoggedIn, setIsLoggedIn}) {
             navigate("/login"); 
         }
     }, [isLoggedIn, navigate]);
-
-
-
 
     const [order, setOrder] = useState([]);
     const [catalog, setCatalog] = useState([]);
