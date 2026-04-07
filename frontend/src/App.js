@@ -5,11 +5,14 @@ import "./styles.css";
 import Flavors from "./FlavoursPage"
 import LoginPage from "./LoginPage";
 import SignupPage from "./SignupPage";
+import OrderHistory from "./OrderHistory";
 import React from "react";
 
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => localStorage.getItem("isLoggedIn") === "true"
+  );
 
   return (
     <BrowserRouter>
@@ -18,6 +21,7 @@ function App() {
         <Route path="/FlavoursPage" element={<Flavors isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>} />
         <Route path="/login" element={<LoginPage isLoggedIn = {isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} />
         <Route path = "/signup" element={<SignupPage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} />
+        <Route path = "/OrderHistory" element={<OrderHistory isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>}/>
       </Routes>
     </BrowserRouter>
   );
