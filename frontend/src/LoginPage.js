@@ -47,6 +47,8 @@ function LoginForm({setIsLoggedIn}) {
                     setMsgType("success")
                     setIsLoggedIn(true)
                     localStorage.setItem("isLoggedIn", "true");
+                    localStorage.setItem("userId", data.userId); 
+                    localStorage.setItem("username", data.username);
                 }else{
                     setMsg(data.message || "Invalid credentials.")
                     setMsgType("error")

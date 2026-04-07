@@ -29,6 +29,7 @@
         ]
     },
     {
+        "id": 2,
         "username": "Jad_dina",
         "email": "jaddina19@outlook.com",
         "password_hash": "$2b$12$j0VrplixfUmOscD7F3YzQuHM0Z0L0VdppApTB32MNLEB12Tf8TCDi",
@@ -36,9 +37,18 @@
         "orders": []
     },
     {
+        "id": 3,
         "username": "testing_test",
         "email": "test@test.com",
         "password_hash": "$2b$12$Ij44RuNBSgy5AhQSe5bb0u0IgFWGWjB40bczS92cj98.176w30wKy",
+        "cart": [],
+        "orders": []
+    },
+    {
+        "id": 4,
+        "username": "arjun_chatha",
+        "email": "arjunchatha13@gmail.com",
+        "password_hash": "$2b$12$KsysIjnaJ.J/wZA.1jCXguPIgp.tej2IBOBmAbZamyVKZjsrpnUKO",
         "cart": [],
         "orders": []
     }

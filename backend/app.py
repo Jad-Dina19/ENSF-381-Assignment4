@@ -53,6 +53,7 @@ def signup():
                 })
 
     user = {
+        'id': len(users) + 1,
         'username': username,
         'email': email,
         'password_hash': bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
@@ -85,7 +86,9 @@ def login():
             if bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8')):
                 return flask.jsonify({
                     'message': 'Login successful',
-                    'success': True
+                    'success': True,
+                    'userId': user.get('id'),     
+                    'username': user.get('username')
                 })
             else:
                 return flask.jsonify({
@@ -170,7 +173,7 @@ def get_cart():
         })
     
     for user in users:
-        if(user['if'] == user_id):
+        if(user['id'] == user_id):
             cart = user['cart']
             return flask.jsonify({
                 'success': True,
@@ -182,6 +185,139 @@ def get_cart():
     "success": False,
     "message": f"User {user_id} not found."
     })
+
+
+
+@app.route('/cart', methods=['POST'])
+def add_to_cart():
+    data = flask.request.get_json()
+    user_id = data.get('userId')
+    flavor_id = data.get('flavorId')
+
+    with open('users.json', 'r') as f:
+        users = json.load(f)
+    
+    with open('flavours.json', 'r') as f:
+        flavors = json.load(f)
+
+    selected_flavor = next((f for f in flavors if f['id'] == flavor_id), None)
+    if not selected_flavor:
+        return flask.jsonify({"success": False, "message": "Flavor not found."}), 404
+
+    for user in users:
+        if user.get('id') == user_id:
+            if any(item['flavorId'] == flavor_id for item in user['cart']):
+                return flask.jsonify({"success": False, "message": "Flavor already in cart. Use PUT to update quantity."}), 400
+            
+            user['cart'].append({
+                "flavorId": selected_flavor['id'],
+                "name": selected_flavor['name'],
+                "price": float(selected_flavor['price'].replace('$', '')),
+                "quantity": 1
+            })
+            
+            with open('users.json', 'w') as f:
+                json.dump(users, f, indent=4)
+            return flask.jsonify({"success": True, "message": "Flavor added to cart.", "cart": user['cart']})
+
+    return flask.jsonify({"success": False, "message": "User not found."}), 404
+
+@app.route('/cart', methods=['PUT'])
+def update_cart():
+    data = flask.request.get_json()
+    user_id = data.get('userId')
+    flavor_id = data.get('flavorId')
+    quantity = data.get('quantity')
+
+    if quantity < 1:
+        return flask.jsonify({"success": False, "message": "Quantity must be at least 1."}), 400
+
+    with open('users.json', 'r') as f:
+        users = json.load(f)
+
+    for user in users:
+        if user.get('id') == user_id:
+            for item in user['cart']:
+                if item['flavorId'] == flavor_id:
+                    item['quantity'] = quantity
+                    with open('users.json', 'w') as f:
+                        json.dump(users, f, indent=4)
+                    return flask.jsonify({"success": True, "message": "Cart updated successfully.", "cart": user['cart']})
+            
+            return flask.jsonify({"success": False, "message": "Flavor not in cart."}), 404
+
+    return flask.jsonify({"success": False, "message": "User not found."}), 404
+
+@app.route('/cart', methods=['DELETE'])
+def delete_cart_item():
+    data = flask.request.get_json()
+    user_id = data.get('userId')
+    flavor_id = data.get('flavorId')
+
+    with open('users.json', 'r') as f:
+        users = json.load(f)
+
+    for user in users:
+        if user.get('id') == user_id:
+            user['cart'] = [item for item in user['cart'] if item['flavorId'] != flavor_id]
+            with open('users.json', 'w') as f:
+                json.dump(users, f, indent=4)
+            return flask.jsonify({"success": True, "message": "Flavor removed from cart.", "cart": user['cart']})
+
+    return flask.jsonify({"success": False, "message": "User not found."}), 404
+
+@app.route('/orders', methods=['POST'])
+def place_order():
+    data = flask.request.get_json()
+    user_id = data.get('userId')
+
+    with open('users.json', 'r') as f:
+        users = json.load(f)
+
+    for user in users:
+        if user.get('id') == user_id:
+            if not user['cart']:
+                return flask.jsonify({"success": False, "message": "Cart is empty."}), 400
+
+            new_order = {
+                "orderId": len(user['orders']) + 1,
+                "items": list(user['cart']),
+                "total": sum(item['price'] * item['quantity'] for item in user['cart']),
+                "timestamp": "2026-04-06 17:00:00"
+            }
+            
+            user['orders'].append(new_order)
+            user['cart'] = []
+            
+            with open('users.json', 'w') as f:
+                json.dump(users, f, indent=4)
+            return flask.jsonify({"success": True, "message": "Order placed successfully.", "orderId": new_order['orderId']})
+
+    return flask.jsonify({"success": False, "message": "User not found."}), 404
+
+@app.route('/orders', methods=['GET'])
+def get_orders():
+    
+    user_id = flask.request.args.get('userId', type=int) 
+
+    if user_id is None:
+        return flask.jsonify({"success": False, "message": "Missing userId"}), 400
+
+    with open('users.json', 'r') as f:
+        users = json.load(f)
+
+    for user in users:
+       
+        if user.get('id') == user_id: 
+            return flask.jsonify({
+                "success": True, 
+                "message": "Order history loaded.", 
+                "orders": user.get('orders', [])
+            })
+
+    return flask.jsonify({"success": False, "message": "User not found."}), 404
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

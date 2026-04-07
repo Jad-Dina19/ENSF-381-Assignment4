@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Header, Footer } from "./Homepage";
-import flavors from "./data/flavours";
+/* import flavors from "./data/flavours"; */
+import { useNavigate } from "react-router-dom";
 
 function FlavorItem({ flavor, addToOrder }) {
     const [showDescription, setShowDescription] = useState(false);
@@ -21,7 +22,7 @@ function FlavorItem({ flavor, addToOrder }) {
     );
 }
 
-function FlavourCatalog({ addToOrder }) {
+/* function FlavourCatalog({ addToOrder }) {
     return (
         <div className="flavor-grid">
             {flavors.map((flavor) => (
@@ -33,10 +34,10 @@ function FlavourCatalog({ addToOrder }) {
             ))}
         </div>
     );
-}
+} */
 
 function OrderItem({ item, remove }) {
-    const { name, price, quantity } = item;
+    const { name, price, quantity, flavorId } = item; 
 
     return (
         <div className="order-item">
@@ -64,7 +65,7 @@ function OrderList({ order, removeFromOrder }) {
             ) : (
                 order.map((item) => (
                     <OrderItem
-                        key={item.id}
+                        key={item.flavorId}
                         item={item}
                         remove={removeFromOrder}
                     />
@@ -76,57 +77,76 @@ function OrderList({ order, removeFromOrder }) {
 }
 
 export default function Flavors({isLoggedIn, setIsLoggedIn}) {
+
+    
+
+    
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!isLoggedIn) {
+            navigate("/login"); 
+        }
+    }, [isLoggedIn, navigate]);
+
+
+
+
     const [order, setOrder] = useState([]);
-    const [isLoaded, setIsLoaded] = useState(false);
+    const [catalog, setCatalog] = useState([]);
+    const userId = localStorage.getItem("userId");
 
     useEffect(() => {
-        const savedOrder = localStorage.getItem("sweetScoopOrder");
-        if (savedOrder) {
-            setOrder(JSON.parse(savedOrder));
-        }
-        setIsLoaded(true);
-    }, []);
-
-    useEffect(() => {
-        if (isLoaded) {
-            localStorage.setItem("sweetScoopOrder", JSON.stringify(order));
-        }
-    }, [order, isLoaded]);
+        
+        fetch("http://127.0.0.1:5000/flavours").then(res => res.json())
+            .then(data => setCatalog(data.flavours));
+        
+        
+        fetch(`http://127.0.0.1:5000/cart?userId=${userId}`).then(res => res.json())
+            .then(data => { if(data.success) setOrder(data.cart); });
+    }, [userId]);
 
     function addToOrder(flavor) {
-        setOrder((prevOrder) => {
-            const existingItem = prevOrder.find((item) => item.id === flavor.id);
+        const existing = order.find(item => item.flavorId === flavor.id);
+        const method = existing ? "PUT" : "POST"; 
+        const body = { userId: parseInt(userId), flavorId: flavor.id };
+        if (existing) body.quantity = existing.quantity + 1;
 
-            if (existingItem) {
-                return prevOrder.map((item) =>
-                    item.id === flavor.id
-                        ? { ...item, quantity: item.quantity + 1 }
-                        : item
-                );
-            }
-
-            return [...prevOrder, { ...flavor, quantity: 1 }];
-        });
+        fetch("http://127.0.0.1:5000/cart", {
+            method: method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        }).then(res => res.json()).then(data => setOrder(data.cart));
     }
 
-    function removeFromOrder(flavor) {
-        setOrder((prevOrder) =>
-            prevOrder
-                .map((item) =>
-                    item.id === flavor.id
-                        ? { ...item, quantity: item.quantity - 1 }
-                        : item
-                )
-                .filter((item) => item.quantity > 0)
-        );
+    function removeFromOrder(item) {
+        fetch("http://127.0.0.1:5000/cart", {
+            method: "DELETE", 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: parseInt(userId), flavorId: item.flavorId })
+        }).then(res => res.json()).then(data => setOrder(data.cart));
+    }
+
+    function handlePlaceOrder() {
+        fetch("http://127.0.0.1:5000/orders", {
+            method: "POST", 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: parseInt(userId) })
+        }).then(res => res.json()).then(data => {
+            alert(data.message);
+            setOrder([]); 
+        });
     }
 
     return (
         <div className="flavors-page">
             <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
             <div className="content">
-                <FlavourCatalog addToOrder={addToOrder} />
+                <div className="flavor-grid">
+                    {catalog.map(f => <FlavorItem key={f.id} flavor={f} addToOrder={addToOrder}/>)}
+                </div>
                 <OrderList order={order} removeFromOrder={removeFromOrder} />
+                <button onClick={handlePlaceOrder}>Place Order</button>
             </div>
             <Footer />
         </div>
